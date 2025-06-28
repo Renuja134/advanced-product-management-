@@ -68,3 +68,20 @@ $(document).on('click', '.btn-decrease', function() {
         }
     });
 });
+// පණිවුණ පෙන්වීම
+function showAlert(type, message) {
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    
+    // පිටුවේ ඉහළින් පණිවුණය පෙන්වන්න
+    $('#alert-container').html(alertHtml);
+    
+    // 5 තත්පරයකින් ස්වයංක්‍රීයව අතුරුදහන් වීම
+    setTimeout(() => {
+        $('.alert').alert('close');
+    }, 5000);
+}
