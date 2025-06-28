@@ -1,1 +1,15 @@
 
+/* Product Details Page Styles */
+.no-image {
+    border: 1px dashed #ddd;
+    border-radius: 4px;
+}
+
+.img-fluid.rounded {
+    max-height: 300px;
+    object-fit: contain;
+}
+
+.table th {
+    background-color: #f8f9fa;
+}
