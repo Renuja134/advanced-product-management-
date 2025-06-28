@@ -33,3 +33,50 @@ $lowStock = $conn->query("SELECT COUNT(*) FROM products WHERE quantity < 10")->f
 </div>
 
 <?php require_once '../includes/footer.php'; ?>
+<div class="dashboard-container">
+    <!-- Real-time Stats Cards -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="stat-card bg-primary">
+                <h3>Total Products</h3>
+                <p id="productCount"><?= $totalProducts ?></p>
+                <i class="fas fa-box"></i>
+            </div>
+        </div>
+        <!-- Add 3 more stat cards -->
+    </div>
+
+    <!-- Recent Activity Feed -->
+    <div class="activity-feed mt-4">
+        <h4>Recent Activity</h4>
+        <ul class="list-group">
+            <?php foreach($recentActivities as $activity): ?>
+            <li class="list-group-item">
+                <span class="badge bg-<?= $activity['type'] ?>"><?= $activity['time'] ?></span>
+                <?= $activity['message'] ?>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <!-- Inventory Alert -->
+    <div class="alert alert-warning mt-4" id="lowStockAlert" style="display:none">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="lowStockCount"></span> items are low in stock!
+    </div>
+</div>
+
+<script>
+// AJAX for real-time updates
+setInterval(function(){
+    $.get('api/get_stats.php', function(data){
+        $('#productCount').text(data.products);
+        $('#salesCount').text(data.sales);
+        
+        if(data.low_stock > 0){
+            $('#lowStockAlert').show();
+            $('#lowStockCount').text(data.low_stock);
+        }
+    });
+}, 30000); // Update every 30 seconds
+        </script>
