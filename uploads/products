@@ -1,1 +1,74 @@
+<?php
+require_once '../config/database.php';
+require_once '../includes/auth_check.php';
+require_once '../includes/header.php';
 
+$db = new Database();
+$conn = $db->getConnection();
+
+$search = $_GET['search'] ?? '';
+$category = $_GET['category'] ?? '';
+
+$sql = "SELECT * FROM products WHERE name LIKE ?";
+$params = ["%$search%"];
+
+if(!empty($category)){
+    $sql .= " AND category_id = ?";
+    $params[] = $category;
+}
+
+$stmt = $conn->prepare($sql);
+$stmt->execute($params);
+$products = $stmt->fetchAll();
+?>
+
+<div class="container mt-4">
+    <h2>භාණ්ඩ පිරික්සුම</h2>
+    
+    <form method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" name="search" class="form-control" 
+                       placeholder="භාණ්ඩ නාමය" value="<?= htmlspecialchars($search) ?>">
+            </div>
+            <div class="col-md-4">
+                <select name="category" class="form-control">
+                    <option value="">සියලුම කාණ්ඩ</option>
+                    <?php 
+                    $categories = $conn->query("SELECT * FROM categories")->fetchAll();
+                    foreach($categories as $cat): ?>
+                        <option value="<?= $cat['id'] ?>" 
+                            <?= ($category == $cat['id']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($cat['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-block">පිරික්සන්න</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <?php foreach($products as $product): ?>
+        <div class="col-md-4 mb-4">
+            <div class="card product-card">
+                <?php if($product['image_path']): ?>
+                <img src="<?= $product['image_path'] ?>" class="card-img-top" alt="Product Image">
+                <?php endif; ?>
+                <div class="card-body">
+                    <h5 class="card-title"><?= htmlspecialchars($product['name']) ?></h5>
+                    <p class="card-text">
+                        <strong>මිල:</strong> රු. <?= number_format($product['price'], 2) ?><br>
+                        <strong>ඉතිරි:</strong> <?= $product['quantity'] ?>
+                    </p>
+                    <a href="product_details.php?id=<?= $product['id'] ?>" class="btn btn-primary">විස්තර</a>
+                </div>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<?php require_once '../includes/footer.php'; ?>
