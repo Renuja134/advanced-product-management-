@@ -1,7 +1,7 @@
 <?php
 class Database {
     private $host = "localhost";
-    private $db_name = "product_db";
+    private $db_name = "inventory_db";
     private $username = "root";
     private $password = "";
     public $conn;
@@ -16,6 +16,7 @@ class Database {
                 $this->password
             );
             $this->conn->exec("set names utf8mb4");
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch(PDOException $exception) {
             echo "Database connection error: " . $exception->getMessage();
         }
